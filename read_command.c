@@ -9,6 +9,7 @@
  * =====================================================================================
  */
 #include "wshell.h"
+
 #ifdef READLINE_ON
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -17,8 +18,7 @@
 //return value: number of parameters
 //0 represents only command without any parameters
 //-1 represents wrong input
-int read_command(char **command,char **parameters,char *prompt)
-{
+int read_command(char **command, char **parameters, char *prompt) {
 #ifdef READLINE_ON
     free(buffer);
     buffer = readline(prompt);
@@ -28,47 +28,42 @@ int read_command(char **command,char **parameters,char *prompt)
     }
 
 #else
-    printf("%s",prompt);
-    char* Res_fgets = fgets(buffer,MAXLINE,stdin);
-    if(Res_fgets == NULL)
-    {
+    printf("%s", prompt);
+    char *Res_fgets = fgets(buffer, MAXLINE, stdin);
+    if (Res_fgets == NULL) {
         printf("\n");
         exit(0);
-    }		
+    }
 #endif
 
-    if(buffer[0] == '\0')
+    if (buffer[0] == '\0')
         return -1;
-    char *pStart,*pEnd;
+    char *pStart, *pEnd;
     int count = 0;
     int isFinished = 0;
     pStart = pEnd = buffer;
-    while(isFinished == 0)
-    {
-        while((*pEnd == ' ' && *pStart == ' ') || (*pEnd == '\t' && *pStart == '\t'))
-        {
+    while (isFinished == 0) {
+        while ((*pEnd == ' ' && *pStart == ' ') || (*pEnd == '\t' && *pStart == '\t')) {
             pStart++;
             pEnd++;
         }
 
-        if(*pEnd == '\0' || *pEnd == '\n')
-        {
-            if(count == 0)
+        if (*pEnd == '\0' || *pEnd == '\n') {
+            if (count == 0)
                 return -1;
             break;
         }
 
-        while(*pEnd != ' ' && *pEnd != '\0' && *pEnd != '\n')
+        while (*pEnd != ' ' && *pEnd != '\0' && *pEnd != '\n')
             pEnd++;
 
 
-        if(count == 0)
-        {
+        if (count == 0) {
             char *p = pEnd;
             *command = pStart;
-            while(p!=pStart && *p !='/')
+            while (p != pStart && *p != '/')
                 p--;
-            if(*p == '/')
+            if (*p == '/')
                 p++;
             //else //p==pStart
             parameters[0] = p;
@@ -76,31 +71,24 @@ int read_command(char **command,char **parameters,char *prompt)
 #ifdef DEBUG
             printf("\ncommand:%s\n",*command);
 #endif
-        }
-        else if(count <= MAXARG)
-        {
-            parameters[count-1] = pStart;
+        } else if (count <= MAXARG) {
+            parameters[count - 1] = pStart;
             count++;
-        }
-        else
-        {
+        } else {
             break;
         }
 
-        if(*pEnd == '\0' || *pEnd == '\n')
-        {
+        if (*pEnd == '\0' || *pEnd == '\n') {
             *pEnd = '\0';
             isFinished = 1;
-        }
-        else
-        {
+        } else {
             *pEnd = '\0';
             pEnd++;
-			pStart = pEnd;
+            pStart = pEnd;
         }
     }
 
-    parameters[count-1] = NULL;
+    parameters[count - 1] = NULL;
 
 #ifdef DEBUG
     /*input analysis*/

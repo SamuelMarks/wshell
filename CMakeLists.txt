@@ -3,4 +3,4 @@ project(wshell)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(wshell.c type_prompt.c read_command.c builtin_command.c parsing.c)
+add_executable(wshell wshell.c type_prompt.c read_command.c builtin_command.c parsing.c)
